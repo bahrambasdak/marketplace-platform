@@ -63,6 +63,7 @@ The system contains 4 main domains:
 Managed using React Query.
 
 Examples:
+
 - listings
 - search results
 - user profile
@@ -75,6 +76,7 @@ Examples:
 Managed using Zustand.
 
 Examples:
+
 - modal state
 - sidebar state
 - theme state
@@ -110,3 +112,4 @@ API Layer
 Backend/API
   ↓
 Database
+```
