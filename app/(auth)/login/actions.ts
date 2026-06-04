@@ -1,45 +1,65 @@
-'use server'
+"use server";
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+
+const authSchema = z.object({
+  email: z.email(),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters." }),
+});
+
+function getRedirectMessage(message: string) {
+  return `/login?message=${encodeURIComponent(message)}`;
+}
 
 export async function signIn(formData: FormData) {
-  const supabase = await createClient()
+  const rawData = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  const result = authSchema.safeParse(rawData);
+  if (!result.success) {
+    const firstError =
+      result.error.errors[0]?.message ?? "Invalid login details.";
+    redirect(getRedirectMessage(firstError));
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(result.data);
 
   if (error) {
-    redirect('/error')
+    redirect(getRedirectMessage(error.message ?? "Unable to sign in."));
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  revalidatePath("/", "layout");
+  redirect("/");
 }
 
 export async function signUp(formData: FormData) {
-  const supabase = await createClient()
+  const rawData = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  const result = authSchema.safeParse(rawData);
+  if (!result.success) {
+    const firstError =
+      result.error.errors[0]?.message ?? "Invalid signup details.";
+    redirect(getRedirectMessage(firstError));
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signUp(result.data);
 
   if (error) {
-    redirect('/error')
+    redirect(getRedirectMessage(error.message ?? "Unable to sign up."));
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  revalidatePath("/", "layout");
+  redirect("/");
 }

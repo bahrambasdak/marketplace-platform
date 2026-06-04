@@ -124,6 +124,7 @@
   body {
     @apply bg-background text-foreground;
     height: 100vh;
+    align-items: center;
   }
   html {
     @apply font-sans;
