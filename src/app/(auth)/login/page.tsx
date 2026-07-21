@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 import { signIn, signUp } from "./actions";
-import { Icon } from "@/shared/ui/icon";
+import { Icon } from "@/src/features/shared/ui/icon";
 
 export default async function Login({
   searchParams,

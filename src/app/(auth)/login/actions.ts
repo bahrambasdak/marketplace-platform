@@ -3,13 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/src/lib/supabase/server";
 
 const authSchema = z.object({
   email: z.email(),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters." }),
+    .min(6, { message: "رمز عبور باید حداقل 6 کاراکتر باشد" }),
 });
 
 function getRedirectMessage(message: string) {
@@ -25,7 +25,7 @@ export async function signIn(formData: FormData) {
   const result = authSchema.safeParse(rawData);
   if (!result.success) {
     const firstError =
-      result.error.errors[0]?.message ?? "Invalid login details.";
+      result.error.issues[0]?.message ?? "Invalid login details.";
     redirect(getRedirectMessage(firstError));
   }
 
@@ -49,7 +49,7 @@ export async function signUp(formData: FormData) {
   const result = authSchema.safeParse(rawData);
   if (!result.success) {
     const firstError =
-      result.error.errors[0]?.message ?? "Invalid signup details.";
+      result.error.issues[0]?.message ?? "Invalid signup details.";
     redirect(getRedirectMessage(firstError));
   }
 
