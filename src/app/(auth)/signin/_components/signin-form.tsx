@@ -47,7 +47,7 @@ export const SignInForm: FC = () => {
 
 
   return (
-        <Card className="w-full sm:max-w-md">
+        <Card className="w-full sm:max-w-md p-5 md:p-10">
         <CardContent>
         <form id="signin-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FieldGroup>
@@ -57,7 +57,7 @@ export const SignInForm: FC = () => {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="form-rhf-demo-title">
-                    Username
+                    نام کاربری
                   </FieldLabel>
                   <Input
                     {...field}
@@ -78,7 +78,7 @@ export const SignInForm: FC = () => {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="form-rhf-demo-description">
-                    Password
+                    رمز عبور
                   </FieldLabel>
                   <Input
                     {...field}
@@ -95,7 +95,7 @@ export const SignInForm: FC = () => {
                 </Field>
               )}
             />
-          <Button type="submit" form="signin-form">
+          <Button type="submit" form="signin-form" className="mt-3" disabled >
             Submit
           </Button>
           </FieldGroup>
