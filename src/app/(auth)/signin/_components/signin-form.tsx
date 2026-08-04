@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { Controller, useForm } from "react-hook-form";
-import { FC, FormEvent, startTransition, useState } from "react";
+import { FC, useTransition } from "react";
 import { Icon } from "@/src/features/shared/ui/icon";
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -17,39 +15,35 @@ import { Input } from "@/components/ui/input";
 import { SignInModel } from "../_types";
 import { SignInSchema } from "../_types/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { start } from "node:repl";
 import { signInAction } from "../actions";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
-
-
-
-type MessageType = "error" | "success" | "info";
 
 export const SignInForm: FC = () => {
-
   const form = useForm<SignInModel>({
     resolver: zodResolver(SignInSchema),
-        defaultValues: {
+    defaultValues: {
       username: "",
       password: "",
+      submit: false,
     },
-  }); 
+  });
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit = async(data: SignInModel) => {
-    startTransition(async() => {
+  const onSubmit = async (data: SignInModel) => {
+    startTransition(async () => {
       const responce = await signInAction(data);
       console.log(responce);
     });
-  }
-      
-
-
+  };
 
   return (
-        <Card className="w-full sm:max-w-md p-5 md:p-10">
-        <CardContent>
-        <form id="signin-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Card className="w-full sm:max-w-md p-5 md:p-10">
+      <CardContent>
+        <form
+          id="signin-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
           <FieldGroup>
             <Controller
               name="username"
@@ -95,16 +89,17 @@ export const SignInForm: FC = () => {
                 </Field>
               )}
             />
-          <Button type="submit" form="signin-form" className="mt-3" disabled >
-            Submit
-          </Button>
+            <Button
+              type="submit"
+              form="signin-form"
+              className="mt-3"
+              name="submit"
+            >
+              {isPending ? "Submiting" : "Submit"}
+            </Button>
           </FieldGroup>
         </form>
-
-        </CardContent>
-        
-
-
+      </CardContent>
     </Card>
   );
-}
+};
