@@ -32,7 +32,6 @@ export const SignInForm: FC = () => {
   const onSubmit = async (data: SignInModel) => {
     startTransition(async () => {
       const responce = await signInAction(data);
-      console.log(responce);
     });
   };
 

@@ -5,6 +5,7 @@ import { SignInModel } from "./_types";
 import { JWT, UserResponse, UserSession } from "@/src/types/auth.types";
 import { jwtDecode } from "jwt-decode";
 import { access } from "node:fs";
+import { decryptSession, encryptSession } from "../../utils/session";
 
 export async function signInAction(model: SignInModel) {
   const headersList = headers();
@@ -42,7 +43,9 @@ export async function setAuthCookieAction(user: UserResponse) {
   };
 
   const cookieStore = await cookies();
-  cookieStore.set("session", JSON.stringify(session), {
+  const encyptedSession = await encryptSession(session)
+  
+  cookieStore.set("session", encyptedSession, {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
