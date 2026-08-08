@@ -1,10 +1,12 @@
+import { JWTPayload } from "jose";
+
 export interface UserResponse {
   accessToken: string;
   sessionId: string;
   sessionExpiry: number;
 }
 
-export interface JWT {
+export interface JWT extends JWTPayload{
     username: string;
     fullName: string;
     pic: string;
