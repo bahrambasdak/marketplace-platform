@@ -4,13 +4,14 @@ import { cookies, headers } from "next/headers";
 import { SignInModel } from "./_types";
 import { JWT, UserResponse, UserSession } from "@/src/types/auth.types";
 import { jwtDecode } from "jwt-decode";
-import { access } from "node:fs";
-import { decryptSession, encryptSession } from "../../utils/session";
+import {  decryptSession, encryptSession } from "../../utils/session";
+
+  const CLASSBON_URL = process.env.NEXT_PUBLIC_CLASSBON_URL;
+
 
 export async function signInAction(model: SignInModel) {
   const headersList = headers();
   const userAgent = (await headersList).get("user-agent");
-  const CLASSBON_URL = process.env.NEXT_PUBLIC_CLASSBON_URL;
 
   try {
     const response = await fetch(`${CLASSBON_URL}/identity/signin`, {
@@ -29,6 +30,33 @@ export async function signInAction(model: SignInModel) {
     return { isSuccess: false };
   }
 }
+export async function signOutAction() {
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get('session')?.value;
+  if (!sessionCookie) {
+    return null;
+  }
+  const session = await decryptSession(sessionCookie);
+
+
+  try {
+    const response = await fetch(`${CLASSBON_URL}/identity/signout`, {
+      method: "POST",
+      body: JSON.stringify({  sessionId: (session as  UserSession).sessionId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      
+      cookieStore.delete("session");
+      return { isSuccess: true, response: null };
+    }
+  } catch {
+    return { isSuccess: false };
+  }
+}
+
 
 export async function setAuthCookieAction(user: UserResponse) {
   const decoded = jwtDecode<JWT>(user.accessToken);

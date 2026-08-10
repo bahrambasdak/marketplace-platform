@@ -17,6 +17,8 @@ import { SignInSchema } from "../_types/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInAction } from "../actions";
 import { Card, CardContent } from "@/src/components/ui/card";
+import { useSessionStore } from "@/src/app/stores/auth.store";
+import { useRouter } from "next/navigation";
 
 export const SignInForm: FC = () => {
   const form = useForm<SignInModel>({
@@ -26,12 +28,18 @@ export const SignInForm: FC = () => {
       password: "",
       submit: false,
     },
-  });
-  const [isPending, startTransition] = useTransition();
+    });
+    const [isPending, startTransition] = useTransition();
+  const updateSession = useSessionStore((state) => state.updateSession);
+  const router = useRouter();
 
   const onSubmit = async (data: SignInModel) => {
-    startTransition(async () => {
-      const responce = await signInAction(data);
+  startTransition(async () => {
+      const response = await signInAction(data);
+      if (response?.isSuccess) {
+         updateSession();
+         router.push("/dashboard");
+      }
     });
   };
 
