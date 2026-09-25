@@ -11,10 +11,10 @@ pnpm
 ## Services
 
 Frontend:
-Next.js
+Next.js App Router in `src/app`
 
 API:
-Node.js
+Next.js route handlers in `src/app/api`
 
 Database:
 PostgreSQL
@@ -35,7 +35,7 @@ pnpm dev
 ## Testing
 
 pnpm test
-pnpm test:e2e
+Playwright commands are available only if Playwright tests are added to the repository.
 
 ## Database
 
@@ -47,6 +47,8 @@ pnpm db:seed
 docker compose up -d
 
 ## graphify
+
+For the concrete directory responsibilities and request flows, read `.ai/knowledge/project-map.md` first.
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
 

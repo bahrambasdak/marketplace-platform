@@ -1,5 +1,7 @@
 # BazaarHub Frontend Architecture
 
+For the concrete repository paths and current request flows, see `.ai/knowledge/project-map.md`.
+
 ## Overview
 
 BazaarHub is a production-oriented marketplace platform inspired by modern large-scale products such as Divar, Digikala Marketplace, and SaaS admin systems.
@@ -33,7 +35,7 @@ The system contains 4 main domains:
 
 ## Frontend Core
 
-- Next.js 15 (App Router)
+- Next.js 16 (App Router)
 - React 19
 - TypeScript
 - TailwindCSS
@@ -103,13 +105,15 @@ The architecture aims to achieve:
 ```txt
 User
   ↓
-Next.js App Router
+Next.js App Router (`src/app`)
   ↓
-Feature Layer
+Route page, layout, server action, or API route
   ↓
-API Layer
+Feature and shared layers (`src/features`, `src/shared`)
   ↓
-Backend/API
+Prisma client (`src/shared/lib/prisma.ts`)
   ↓
-Database
+PostgreSQL (`prisma/schema.prisma`)
 ```
+
+Authentication is a special cross-boundary flow: sign-in server actions call the external identity service configured by `NEXT_PUBLIC_CLASSBON_URL`, store an encrypted `session` cookie, and `src/proxy/auth.proxy.ts` validates, refreshes, or redirects requests before protected routes render.

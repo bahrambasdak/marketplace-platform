@@ -3,6 +3,8 @@
 
 This is a production-oriented marketplace application.
 
+For the canonical map of directory responsibilities and runtime connections, read `.ai/knowledge/project-map.md`.
+
 The purpose of this project is twofold:
 
 1. Build a realistic marketplace.

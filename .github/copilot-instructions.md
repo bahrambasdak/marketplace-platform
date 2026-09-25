@@ -26,16 +26,19 @@ Purpose: give Copilot sessions concise, actionable repository context so suggest
 
 ## High-level architecture (big picture)
 
-- Frontend: Next.js (App Router) at the repository root `app/` directory. Routes are defined under `app/` (e.g., `app/admin`, `app/platform`, feature subfolders). Server and client components follow Next.js app-router conventions.
-- Feature layer: `features/` contains domain-specific UI/logic organized per feature.
-- Domain models / data: `entities/` holds canonical domain types and shapes.
-- Shared platform libraries: `shared/` is the single-source library for:
+- Canonical connection map: read `.ai/knowledge/project-map.md` before making cross-layer changes.
+- Frontend: Next.js App Router under `src/app/`. Route groups include `src/app/(auth)`, `src/app/(platform)`, `src/app/(dashboard)`, and `src/app/admin`.
+- API boundary: Next.js route handlers under `src/app/api/`.
+- Feature layer: `src/features/` contains domain-specific UI and logic organized per feature.
+- Domain models / data: `src/entities/` holds domain-oriented types and shapes.
+- Shared platform libraries: `src/shared/` is the single-source library for:
   - api clients and interceptors (shared/api)
   - UI primitives and shadcn components (shared/ui)
   - types (shared/types)
   - hooks, providers and utility helpers
-- Core services: `core/` provides platform-level services (business logic used across features).
-- Widgets / components: `widgets/` and `components/` contain reusable UI modules and shadcn component config (see components.json).
+- Request authentication: `src/proxy.ts` delegates to `src/proxy/auth.proxy.ts`, which reads the encrypted `session` cookie and handles protected-route redirects and token refresh.
+- Database: `prisma/schema.prisma` defines models, and `src/shared/lib/prisma.ts` provides the shared Prisma client.
+- Widgets / components: `src/components/` and root `components/` contain reusable UI modules and shadcn primitives (see components.json).
 - Data fetching & validation:
   - TanStack Query (React Query) for server-state
   - Axios wrapper(s) in shared/api for HTTP clients
@@ -52,7 +55,7 @@ Purpose: give Copilot sessions concise, actionable repository context so suggest
 - Project layout: prefer feature-sliced organization — put UI + hooks + tests close to feature implementations (see `features/`). Reusable primitives live in `shared/`.
 - Server vs client components: follow Next.js app-router defaults. If a component uses browser-only APIs or hooks (useEffect, Zustand client state), mark it as "use client".
 - Forms: React Hook Form + Zod are the expected pattern for form handling and validation.
-- API clients & interceptors: shared/api contains request clients and interceptor patterns — reuse them instead of creating ad-hoc fetch wrappers.
+- API clients & interceptors: `src/shared/api` contains request clients and interceptor patterns — reuse them instead of creating ad-hoc fetch wrappers.
 - Husky & pre-commit: Husky is present. Current `.husky/pre-commit` invokes `pnpm test` — add or update `test` script in package.json to match chosen test runner to avoid broken pre-commit hooks.
 - Linting: ESLint is configured via `eslint.config.mjs` that extends Next.js defaults; run `pnpm lint` at repo root.
 - Environment: local secrets and runtime values live in `.env.local` (do not commit). shared/config/env.ts centralizes usage of env values.
@@ -61,9 +64,10 @@ Purpose: give Copilot sessions concise, actionable repository context so suggest
 
 ## Where to look first
 
-- app/ — entrypoints and routes
-- shared/ — primitives: api, ui, types, hooks
-- features/ — feature implementations
+- src/app/ — entrypoints, route groups, server actions, and API route handlers
+- src/shared/ — primitives: api, ui, types, hooks, providers, services
+- src/features/ — feature implementations
+- prisma/schema.prisma — database models and constraints
 - docs/architecture.md — authoritative summary of architectural goals
 
 ---
